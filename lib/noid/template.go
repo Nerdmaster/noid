@@ -54,6 +54,7 @@ func NewTemplate(template string) (*Template, error) {
 		case 'r': t.ordering = Random
 		case 's': t.ordering = SequentialLimited
 		case 'z': t.ordering = SequentialUnlimited
+		default: return nil, errors.New("Ordering character must be 'r', 's', or 'z'")
 	}
 
 	t.mask = suffix[1:]

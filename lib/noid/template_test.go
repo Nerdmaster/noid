@@ -51,3 +51,16 @@ func TestLongTemplates(t *testing.T) {
 		t.Errorf("Expected %#v to be invalid, but err was nil", str)
 	}
 }
+
+func TestBadOrder(t *testing.T) {
+	str := "foo.xeedee"
+	template, err := NewTemplate(str)
+
+	if template != nil {
+		t.Errorf("Expected %#v to be invalid, but template was non-nil", str)
+	}
+
+	if err == nil {
+		t.Errorf("Expected %#v to be invalid, but err was nil", str)
+	}
+}
