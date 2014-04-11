@@ -64,3 +64,21 @@ func TestBadOrder(t *testing.T) {
 		t.Errorf("Expected %#v to be invalid, but err was nil", str)
 	}
 }
+
+func TestMoreMoarMOAR(t *testing.T) {
+	str := "foo.seedee"
+	template, _ := NewTemplate(str)
+
+	assertTemplateAttributeS(str, "prefix", "foo", template.prefix, t)
+	assertTemplateAttributeS(str, "mask", "eedee", template.mask, t)
+	assertTemplateAttributeO(str, "ordering", SequentialLimited, template.ordering, t)
+	assertTemplateAttributeB(str, "hasCheckDigit", false, template.hasCheckDigit, t)
+
+	str = "foo.zeedee"
+	template, _ = NewTemplate(str)
+
+	assertTemplateAttributeS(str, "prefix", "foo", template.prefix, t)
+	assertTemplateAttributeS(str, "mask", "eedee", template.mask, t)
+	assertTemplateAttributeO(str, "ordering", SequentialUnlimited, template.ordering, t)
+	assertTemplateAttributeB(str, "hasCheckDigit", false, template.hasCheckDigit, t)
+}
