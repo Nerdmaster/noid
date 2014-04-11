@@ -44,7 +44,7 @@ func TestLongTemplates(t *testing.T) {
 	str := "prefix.reedeedeedeedeedeedeedeedeek"
 	template, err := NewTemplate(str)
 	if template != nil {
-		t.Errorf("Expected %#v to be invalid, but template was non-nil", str)
+		t.Errorf("Expected %#v to be invalid, but template was %#v", str, template)
 	}
 
 	if err == nil {

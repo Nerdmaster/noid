@@ -34,15 +34,7 @@ func NewTemplate(template string) (*Template, error) {
 	// You know what's hip and cool these days?  Storing values immediately on
 	// instantiation when said values are essentially static, read-only data
 	t := &Template{}
-	parts := strings.Split(template, ".")
-
-	if len(parts) == 1 {
-		t.prefix = ""
-		suffix = parts[0]
-	} else {
-		t.prefix = parts[0]
-		suffix = parts[1]
-	}
+	t.prefix, suffix = splitTemplateString(template)
 
 	last := len(suffix) - 1
 	if suffix[last] == 'k' {
@@ -64,4 +56,16 @@ func NewTemplate(template string) (*Template, error) {
 	}
 
 	return t, nil
+}
+
+// Returns the prefix and suffix parts of a template string, defaulting to a
+// prefix of "" when no period is in the string
+func splitTemplateString(s string) (string, string) {
+	parts := strings.Split(s, ".")
+
+	if len(parts) == 1 {
+		return "", s
+	}
+
+	return parts[0], parts[1]
 }
