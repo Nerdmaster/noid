@@ -35,12 +35,7 @@ func NewTemplate(template string) (*Template, error) {
 	// instantiation when said values are essentially static, read-only data
 	t := &Template{}
 	t.prefix, suffix = splitTemplateString(template)
-
-	last := len(suffix) - 1
-	if suffix[last] == 'k' {
-		t.hasCheckDigit = true
-		suffix = suffix[0:last]
-	}
+	t.hasCheckDigit, suffix = getCheckDigitFromSuffix(suffix)
 
 	switch suffix[0] {
 		case 'r': t.ordering = Random
@@ -68,4 +63,16 @@ func splitTemplateString(s string) (string, string) {
 	}
 
 	return parts[0], parts[1]
+}
+
+// Returns whether or not the final character is a check digit ("k") as well as
+// the new suffix (in the case of no check digit, the suffix returned is the
+// same as was passed in)
+func getCheckDigitFromSuffix(suffix string) (bool, string) {
+	last := len(suffix) - 1
+	if suffix[last] == 'k' {
+		return true, suffix[0:last]
+	}
+
+	return false, suffix
 }
