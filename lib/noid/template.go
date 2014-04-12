@@ -30,18 +30,17 @@ const MaxMaskLength = 13
 
 func NewTemplate(template string) (*Template, error) {
 	var suffix string
+	var err error
 
 	// You know what's hip and cool these days?  Storing values immediately on
 	// instantiation when said values are essentially static, read-only data
 	t := &Template{}
 	t.prefix, suffix = splitTemplateString(template)
 	t.hasCheckDigit, suffix = getCheckDigitFromSuffix(suffix)
+	t.ordering, err = getOrderingFromChar(suffix[0])
 
-	switch suffix[0] {
-		case 'r': t.ordering = Random
-		case 's': t.ordering = SequentialLimited
-		case 'z': t.ordering = SequentialUnlimited
-		default: return nil, errors.New("Ordering character must be 'r', 's', or 'z'")
+	if err != nil {
+		return nil, err
 	}
 
 	t.mask = suffix[1:]
@@ -75,4 +74,20 @@ func getCheckDigitFromSuffix(suffix string) (bool, string) {
 	}
 
 	return false, suffix
+}
+
+func getOrderingFromChar(c byte) (Ordering, error) {
+	var err error
+	var order Ordering
+
+	err = nil
+
+	switch c {
+		case 'r': order = Random
+		case 's': order = SequentialLimited
+		case 'z': order = SequentialUnlimited
+		default: err = errors.New("Ordering character must be 'r', 's', or 'z'")
+	}
+
+	return order, err
 }
