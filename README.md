@@ -4,6 +4,13 @@ C, noid, Go!  Go, noid, Go!
 **NOTE**: I have no idea if I'll ever actually use C in this project, but I
 couldn't just *not* use that title.  It would be criminal.
 
+License
+-----
+
+This software is licensed under the [Creative Commons Attribution 4.0 International](./LICENSE.txt)
+license, which seems to be the most public-domain-like license I can find
+that's not on shaky ground legally.
+
 About
 -----
 
