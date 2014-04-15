@@ -117,10 +117,7 @@ func (template *Template) calculateSuffix(sequenceValue int64) string {
 	// First, go through the mask in reverse, treating each mask character as a
 	// base for the sequenceValue to convert to a noid character
 	for i, char = range template.reverseMask {
-		base = 10
-		if char == 'e' {
-			base = 29
-		}
+		base = baseForMaskCharacter(char)
 		templateChar := rune(ExtendedDigits[sequenceValue % int64(base)])
 		noidContainer[MaxMaskLength - i] = templateChar
 		sequenceValue = sequenceValue / base
@@ -133,4 +130,14 @@ func (template *Template) calculateSuffix(sequenceValue int64) string {
 	}
 
 	return string(noidContainer[MaxMaskLength-i:MaxMaskLength+1])
+}
+
+// Uses hard-coded values 10 and 29 to quickly return the base a given
+// character will be using
+func baseForMaskCharacter(char rune) int64 {
+	if char == 'd' {
+		return 10
+	}
+
+	return 29
 }
