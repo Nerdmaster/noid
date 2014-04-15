@@ -14,10 +14,14 @@ const (
 	SequentialUnlimited
 )
 
+const Digits = "0123456789"
+const ExtendedDigits = "0123456789bcdfghjkmnpqrstvwxz"
+
 type Template struct {
 	prefix string
 	ordering Ordering
 	mask string
+	reverseMask string
 	hasCheckDigit bool
 }
 
@@ -48,6 +52,8 @@ func NewTemplate(template string) (*Template, error) {
 	if len(t.mask) > MaxMaskLength {
 		return nil, errors.New(fmt.Sprintf("Mask cannot be more than %d characters", MaxMaskLength))
 	}
+
+	t.reverseMask = stringReverse(t.mask)
 
 	return t, nil
 }
@@ -90,4 +96,41 @@ func getOrderingFromChar(c byte) (Ordering, error) {
 	}
 
 	return order, err
+}
+
+// Utility for easing the template mask reversal
+func stringReverse(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
+}
+
+// Generates a noid suffix for a given value of the noid sequence
+func (template Template) calculateSuffix(sequenceValue int64) string {
+	var base int64
+	var noidContainer [MaxMaskLength + 1]rune
+	var i int
+	var char rune
+
+	// First, go through the mask in reverse, treating each mask character as a
+	// base for the sequenceValue to convert to a noid character
+	for i, char = range template.reverseMask {
+		base = 10
+		if char == 'e' {
+			base = 29
+		}
+		templateChar := rune(ExtendedDigits[sequenceValue % int64(base)])
+		noidContainer[MaxMaskLength - i] = templateChar
+		sequenceValue = sequenceValue / base
+	}
+
+	// If sequenceValue wasn't completely used, and this isn't an "unlimited"
+	// template, we can't mint a noid
+	if sequenceValue > 0 && template.ordering != SequentialUnlimited {
+		panic("sequenceValue out of range for template")
+	}
+
+	return string(noidContainer[MaxMaskLength-i:MaxMaskLength+1])
 }
