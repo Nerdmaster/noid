@@ -108,7 +108,7 @@ func stringReverse(s string) string {
 }
 
 // Generates a noid suffix for a given value of the noid sequence
-func (template Template) calculateSuffix(sequenceValue int64) string {
+func (template *Template) calculateSuffix(sequenceValue int64) string {
 	var base int64
 	var noidContainer [MaxMaskLength + 1]rune
 	var i int
