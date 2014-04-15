@@ -32,6 +32,8 @@ type Template struct {
 // billion) noids.
 const MaxMaskLength = 13
 
+type NoidSuffixContainer [MaxMaskLength]rune
+
 func NewTemplate(template string) (*Template, error) {
 	var suffix string
 	var err error
@@ -110,7 +112,7 @@ func stringReverse(s string) string {
 // Generates a noid suffix for a given value of the noid sequence
 func (template *Template) calculateSuffix(sequenceValue int64) string {
 	var base int64
-	var noidContainer [MaxMaskLength + 1]rune
+	var suffix NoidSuffixContainer
 	var i int
 	var char rune
 
@@ -118,9 +120,7 @@ func (template *Template) calculateSuffix(sequenceValue int64) string {
 	// base for the sequenceValue to convert to a noid character
 	for i, char = range template.reverseMask {
 		base = baseForMaskCharacter(char)
-		templateChar := rune(ExtendedDigits[sequenceValue % int64(base)])
-		noidContainer[MaxMaskLength - i] = templateChar
-		sequenceValue = sequenceValue / base
+		nextNoidCharacter(&suffix, &sequenceValue, base, i)
 	}
 
 	// If sequenceValue wasn't completely used, and this isn't an "unlimited"
@@ -129,7 +129,7 @@ func (template *Template) calculateSuffix(sequenceValue int64) string {
 		panic("sequenceValue out of range for template")
 	}
 
-	return string(noidContainer[MaxMaskLength-i:MaxMaskLength+1])
+	return string(suffix[MaxMaskLength-1-i:MaxMaskLength])
 }
 
 // Uses hard-coded values 10 and 29 to quickly return the base a given
@@ -140,4 +140,12 @@ func baseForMaskCharacter(char rune) int64 {
 	}
 
 	return 29
+}
+
+// Prepends the "next" character to the noid suffix based on sequence, index
+// (characters *from the right*), and pre-computed base
+func nextNoidCharacter(suffix *NoidSuffixContainer, sequenceValue *int64, base int64, i int) {
+	templateChar := rune(ExtendedDigits[*sequenceValue % base])
+	suffix[MaxMaskLength - 1 - i] = templateChar
+	*sequenceValue = *sequenceValue / base
 }
