@@ -123,10 +123,22 @@ func (template *Template) calculateSuffix(sequenceValue int64) string {
 		nextNoidCharacter(&suffix, &sequenceValue, base, i)
 	}
 
+	if (sequenceValue == 0) {
+		return suffix.toString(i)
+	}
+
 	// If sequenceValue wasn't completely used, and this isn't an "unlimited"
 	// template, we can't mint a noid
-	if sequenceValue > 0 && template.ordering != SequentialUnlimited {
+	if template.ordering != SequentialUnlimited {
 		panic("sequenceValue out of range for template")
+	}
+
+	// Build the rest of the noid suffix using the most significant mask
+	// character for all future characters' bases
+	base = baseForMaskCharacter(rune(template.mask[0]))
+	for sequenceValue > 0 {
+		i++
+		nextNoidCharacter(&suffix, &sequenceValue, base, i)
 	}
 
 	return suffix.toString(i)

@@ -96,4 +96,11 @@ func TestNoidForIndex(t *testing.T) {
 	assertEqualS("00001", template.calculateSuffix(1), "foo.seedee: 1", t)
 	assertEqualS("0015g", template.calculateSuffix(1000), "foo.seedee: 1000", t)
 	assertEqualS("0c8w8", template.calculateSuffix(100000), "foo.seedee: 100000", t)
+
+	str = "foo.zdd"
+	template, _ = NewTemplate(str)
+	assertEqualS("00", template.calculateSuffix(0), "foo.zdd: 0", t)
+	assertEqualS("01", template.calculateSuffix(1), "foo.zdd: 1", t)
+	assertEqualS("1000", template.calculateSuffix(1000), "foo.zdd: 1000", t)
+	assertEqualS("100000", template.calculateSuffix(100000), "foo.zdd: 100000", t)
 }
