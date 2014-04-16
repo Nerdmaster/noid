@@ -129,7 +129,7 @@ func (template *Template) calculateSuffix(sequenceValue int64) string {
 		panic("sequenceValue out of range for template")
 	}
 
-	return string(suffix[MaxMaskLength-1-i:MaxMaskLength])
+	return suffix.toString(i)
 }
 
 // Uses hard-coded values 10 and 29 to quickly return the base a given
@@ -148,4 +148,8 @@ func nextNoidCharacter(suffix *NoidSuffixContainer, sequenceValue *int64, base i
 	templateChar := rune(ExtendedDigits[*sequenceValue % base])
 	suffix[MaxMaskLength - 1 - i] = templateChar
 	*sequenceValue = *sequenceValue / base
+}
+
+func (nsc *NoidSuffixContainer) toString(length int) string {
+	return string(nsc[MaxMaskLength-1-length:MaxMaskLength])
 }
