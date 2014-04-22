@@ -2,6 +2,8 @@
 
 package noid
 
+import "math"
+
 const Digits = "0123456789"
 const ExtendedDigits = "0123456789bcdfghjkmnpqrstvwxz"
 
@@ -9,6 +11,7 @@ type SuffixContainer [MaxMaskLength]rune
 
 type SuffixGenerator struct {
 	sequenceValue uint64
+	maxSequence uint64
 	index int
 	minLength int
 	suffix SuffixContainer
@@ -36,12 +39,35 @@ func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerat
 		nsg.reverseMaskBases[i] = baseForMaskCharacter(char)
 	}
 
+	if nsg.ordering == SequentialUnlimited {
+		nsg.maxSequence = math.MaxUint64
+	} else {
+		nsg.computeMaxSequenceValue()
+	}
+
 	return nsg
+}
+
+// Computes the maximum sequence value by examining the bases (from the reverse
+// mask array) for each character.  This is useful for both types of limited
+// sequences to determine before computation if the sequence value is too high.
+func (nsg *SuffixGenerator) computeMaxSequenceValue() {
+	var multiplier uint64 = 1
+	nsg.maxSequence = 0
+
+	for _, base := range(nsg.reverseMaskBases) {
+		nsg.maxSequence += multiplier * (base - 1)
+		multiplier *= base
+	}
 }
 
 // Returns the noid suffix for the given suffix generator - uses value, not
 // pointer, to avoid altering the internal data
 func (nsg SuffixGenerator) ToString() string {
+	if nsg.sequenceValue > nsg.maxSequence {
+		panic("Overflow!")
+	}
+
 	for nsg.sequenceValue > 0 || nsg.index < nsg.minLength {
 		nsg.addCharacter()
 	}
@@ -55,8 +81,6 @@ func (nsg *SuffixGenerator) addCharacter() {
 	if len(nsg.reverseMaskBases) > 1 {
 		nsg.reverseMaskBases = nsg.reverseMaskBases[1:]
 	}
-
-	// TODO: Re-add overflow detection
 
 	val := nsg.sequenceValue % base
 
