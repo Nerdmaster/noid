@@ -22,7 +22,7 @@ type Template struct {
 }
 
 // 14-character masks can theoretically result in a string that can't be
-// represented by an int64 index, and for now I want all noids to be easily
+// represented by a uint64 index, and for now I want all noids to be easily
 // converted to and from a raw number.  13 characters, if all are using the
 // "extended" set, is still enough to hold over 10 quintillion (10 billion
 // billion) noids.

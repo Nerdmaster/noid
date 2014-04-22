@@ -5,7 +5,7 @@ type Minter struct {
 	generator *SuffixGenerator
 }
 
-func NewMinter(template string, startSequence int64) (*Minter, error) {
+func NewMinter(template string, startSequence uint64) (*Minter, error) {
 	t, err := NewTemplate(template)
 	if err != nil {
 		return nil, err

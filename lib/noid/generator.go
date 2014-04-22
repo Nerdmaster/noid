@@ -8,11 +8,11 @@ const ExtendedDigits = "0123456789bcdfghjkmnpqrstvwxz"
 type SuffixContainer [MaxMaskLength]rune
 
 type SuffixGenerator struct {
-	sequenceValue int64
+	sequenceValue uint64
 	index int
 	minLength int
 	suffix SuffixContainer
-	reverseMaskBases []int64
+	reverseMaskBases []uint64
 	ordering Ordering
 }
 
@@ -25,13 +25,13 @@ func stringReverseRunes(s string) []rune {
 	return runes
 }
 
-func NewSuffixGenerator(template *Template, sequenceValue int64) *SuffixGenerator {
+func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerator {
 	nsg := &SuffixGenerator {sequenceValue: sequenceValue}
 	nsg.ordering = template.ordering
 	nsg.minLength = len(template.mask)
 
 	reverseMask := stringReverseRunes(template.mask)
-	nsg.reverseMaskBases = make([]int64, nsg.minLength)
+	nsg.reverseMaskBases = make([]uint64, nsg.minLength)
 	for i, char := range(reverseMask) {
 		nsg.reverseMaskBases[i] = baseForMaskCharacter(char)
 	}
@@ -72,7 +72,7 @@ func (nsc *SuffixContainer) toString(length int) string {
 
 // Uses hard-coded values 10 and 29 to quickly return the base a given
 // character will be using
-func baseForMaskCharacter(char rune) int64 {
+func baseForMaskCharacter(char rune) uint64 {
 	if char == 'd' {
 		return 10
 	}
