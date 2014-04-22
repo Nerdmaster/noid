@@ -41,7 +41,7 @@ func NewSuffixGenerator(template *Template, sequenceValue int64) *SuffixGenerato
 
 // Returns the noid suffix for the given suffix generator - uses value, not
 // pointer, to avoid altering the internal data
-func (nsg SuffixGenerator) toString() string {
+func (nsg SuffixGenerator) ToString() string {
 	for nsg.sequenceValue > 0 || nsg.index < nsg.minLength {
 		nsg.addCharacter()
 	}
