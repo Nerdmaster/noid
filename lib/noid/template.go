@@ -14,14 +14,10 @@ const (
 	SequentialUnlimited
 )
 
-const Digits = "0123456789"
-const ExtendedDigits = "0123456789bcdfghjkmnpqrstvwxz"
-
 type Template struct {
 	prefix string
 	ordering Ordering
 	mask string
-	reverseMask string
 	hasCheckDigit bool
 }
 
@@ -31,8 +27,6 @@ type Template struct {
 // "extended" set, is still enough to hold over 10 quintillion (10 billion
 // billion) noids.
 const MaxMaskLength = 13
-
-type NoidSuffixContainer [MaxMaskLength]rune
 
 func NewTemplate(template string) (*Template, error) {
 	var suffix string
@@ -54,8 +48,6 @@ func NewTemplate(template string) (*Template, error) {
 	if len(t.mask) > MaxMaskLength {
 		return nil, errors.New(fmt.Sprintf("Mask cannot be more than %d characters", MaxMaskLength))
 	}
-
-	t.reverseMask = stringReverse(t.mask)
 
 	return t, nil
 }
@@ -98,70 +90,4 @@ func getOrderingFromChar(c byte) (Ordering, error) {
 	}
 
 	return order, err
-}
-
-// Utility for easing the template mask reversal
-func stringReverse(s string) string {
-	runes := []rune(s)
-	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
-		runes[i], runes[j] = runes[j], runes[i]
-	}
-	return string(runes)
-}
-
-// Generates a noid suffix for a given value of the noid sequence
-func (template *Template) calculateSuffix(sequenceValue int64) string {
-	var base int64
-	var suffix NoidSuffixContainer
-	var i int
-	var char rune
-
-	// First, go through the mask in reverse, treating each mask character as a
-	// base for the sequenceValue to convert to a noid character
-	for i, char = range template.reverseMask {
-		base = baseForMaskCharacter(char)
-		nextNoidCharacter(&suffix, &sequenceValue, base, i)
-	}
-
-	if (sequenceValue == 0) {
-		return suffix.toString(i)
-	}
-
-	// If sequenceValue wasn't completely used, and this isn't an "unlimited"
-	// template, we can't mint a noid
-	if template.ordering != SequentialUnlimited {
-		panic("sequenceValue out of range for template")
-	}
-
-	// Build the rest of the noid suffix using the most significant mask
-	// character for all future characters' bases
-	base = baseForMaskCharacter(rune(template.mask[0]))
-	for sequenceValue > 0 {
-		i++
-		nextNoidCharacter(&suffix, &sequenceValue, base, i)
-	}
-
-	return suffix.toString(i)
-}
-
-// Uses hard-coded values 10 and 29 to quickly return the base a given
-// character will be using
-func baseForMaskCharacter(char rune) int64 {
-	if char == 'd' {
-		return 10
-	}
-
-	return 29
-}
-
-// Prepends the "next" character to the noid suffix based on sequence, index
-// (characters *from the right*), and pre-computed base
-func nextNoidCharacter(suffix *NoidSuffixContainer, sequenceValue *int64, base int64, i int) {
-	templateChar := rune(ExtendedDigits[*sequenceValue % base])
-	suffix[MaxMaskLength - 1 - i] = templateChar
-	*sequenceValue = *sequenceValue / base
-}
-
-func (nsc *NoidSuffixContainer) toString(length int) string {
-	return string(nsc[MaxMaskLength-1-length:MaxMaskLength])
 }
