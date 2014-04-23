@@ -82,3 +82,13 @@ func TestSuffixMaximum(t *testing.T) {
 	g = NewSuffixGenerator(template, 0)
 	assertEqualUint64(18446744073709551615, g.maxSequence, "Max sequence for zdd: uint64 max", t)
 }
+
+func TestNextSequence(t *testing.T) {
+	var template *Template
+	var g *SuffixGenerator
+
+	template, _ = NewTemplate("sdd")
+	g = NewSuffixGenerator(template, 0)
+	g.NextSequence()
+	assertEqualUint64(1, g.sequenceValue, "0 + 1 is 1!!!!", t)
+}

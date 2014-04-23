@@ -18,7 +18,7 @@ func NewMinter(template string, startSequence uint64) (*Minter, error) {
 
 func (minter *Minter) Mint() string {
 	noidSuffix := minter.generator.ToString()
-	minter.generator.sequenceValue++
+	minter.generator.NextSequence()
 
 	if minter.template.prefix == "" {
 		return noidSuffix

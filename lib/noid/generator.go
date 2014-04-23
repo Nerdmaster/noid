@@ -2,7 +2,10 @@
 
 package noid
 
-import "math"
+import (
+	"math"
+	"errors"
+)
 
 const Digits = "0123456789"
 const ExtendedDigits = "0123456789bcdfghjkmnpqrstvwxz"
@@ -45,6 +48,10 @@ func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerat
 		nsg.computeMaxSequenceValue()
 	}
 
+	if nsg.sequenceValue > nsg.maxSequence {
+		return nil
+	}
+
 	return nsg
 }
 
@@ -64,15 +71,20 @@ func (nsg *SuffixGenerator) computeMaxSequenceValue() {
 // Returns the noid suffix for the given suffix generator - uses value, not
 // pointer, to avoid altering the internal data
 func (nsg SuffixGenerator) ToString() string {
-	if nsg.sequenceValue > nsg.maxSequence {
-		panic("Overflow!")
-	}
-
 	for nsg.sequenceValue > 0 || nsg.index < nsg.minLength {
 		nsg.addCharacter()
 	}
 
 	return nsg.suffix.toString(nsg.index)
+}
+
+func (nsg *SuffixGenerator) NextSequence() error {
+	if nsg.sequenceValue == nsg.maxSequence {
+		return errors.New("Overflow trying to get next sequence")
+	}
+
+	nsg.sequenceValue++
+	return nil
 }
 
 // Based on mask, ordering, and nsg state, prepends the next noid suffix char
