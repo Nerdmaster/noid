@@ -20,6 +20,7 @@ type SuffixGenerator struct {
 	suffix SuffixContainer
 	reverseMaskBases []uint64
 	ordering Ordering
+	seed uint64
 }
 
 // Utility for easing the template mask reversal
@@ -48,11 +49,22 @@ func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerat
 		nsg.computeMaxSequenceValue()
 	}
 
+	// I dunno the right approach here - we want to be able to mint "random"
+	// noids, but keep them predictable for a given template.
+	if nsg.ordering == Random {
+		nsg.seed = nsg.maxSequence / 2
+	}
+
 	if nsg.sequenceValue > nsg.maxSequence {
 		return nil
 	}
 
 	return nsg
+}
+
+// Modifies seed, allowing for more randomness if an application needs this
+func (nsg *SuffixGenerator) Seed(newSeed uint64) {
+	nsg.seed = newSeed
 }
 
 // Computes the maximum sequence value by examining the bases (from the reverse
@@ -94,7 +106,14 @@ func (nsg *SuffixGenerator) addCharacter() {
 		nsg.reverseMaskBases = nsg.reverseMaskBases[1:]
 	}
 
-	val := nsg.sequenceValue % base
+	val := nsg.sequenceValue
+
+	if nsg.ordering == Random {
+		val += nsg.seed
+		nsg.seed -= 1
+	}
+
+	val %= base
 
 	templateChar := rune(ExtendedDigits[val])
 	nsg.suffix[MaxMaskLength - 1 - nsg.index] = templateChar
