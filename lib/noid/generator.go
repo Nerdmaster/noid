@@ -62,6 +62,11 @@ func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerat
 	return nsg
 }
 
+// Modifies seed, allowing for more randomness if an application needs this
+func (nsg *SuffixGenerator) Seed(newSeed uint64) {
+	nsg.seed = newSeed
+}
+
 // Computes the maximum sequence value by examining the bases (from the reverse
 // mask array) for each character.  This is useful for both types of limited
 // sequences to determine before computation if the sequence value is too high.
