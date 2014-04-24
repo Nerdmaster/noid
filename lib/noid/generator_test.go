@@ -92,3 +92,38 @@ func TestNextSequence(t *testing.T) {
 	g.NextSequence()
 	assertEqualUint64(1, g.sequenceValue, "0 + 1 is 1!!!!", t)
 }
+
+func TestRandomNoids(t *testing.T) {
+	var template *Template
+	var g *SuffixGenerator
+
+	template, _ = NewTemplate("reedee")
+	g = NewSuffixGenerator(template, 0)
+	assertEqualS("tv2xz", g.ToString(), "reedee @ first sequence", t)
+
+	g.sequenceValue = g.maxSequence / 2
+	assertEqualS("9b6wx", g.ToString(), "reedee @ middle sequence", t)
+
+	g.sequenceValue = g.maxSequence
+	assertEqualS("st1wx", g.ToString(), "reedee @ last sequence", t)
+}
+
+func TestRandomNoidsDontRepeat(t *testing.T) {
+	var template *Template
+	var g *SuffixGenerator
+	var err error
+
+	template, _ = NewTemplate("reee")
+	g = NewSuffixGenerator(template, 0)
+
+	seen := make(map[string]bool)
+
+	for err == nil {
+		if seen[g.ToString()] {
+			t.Errorf("ACK!!  %#v was seen before!", g.ToString())
+		}
+
+		seen[g.ToString()] = true
+		err = g.NextSequence()
+	}
+}
