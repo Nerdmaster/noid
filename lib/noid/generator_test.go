@@ -1,6 +1,9 @@
 package noid
 
-import "testing"
+import (
+	"testing"
+	"math"
+)
 
 func assertEqualUint64(expected, actual uint64, message string, t *testing.T) {
 	if (expected != actual) {
@@ -34,10 +37,10 @@ func TestSuffixGeneration_seedee(t *testing.T) {
 	assertEqualS("00001", suffixGen.ToString(), "foo.seedee: 1", t)
 
 	suffixGen.sequenceValue = 1000
-	assertEqualS("0015g", suffixGen.ToString(), "foo.seedee: 1000", t)
+	assertEqualS("000z8", suffixGen.ToString(), "foo.seedee: 1000", t)
 
 	suffixGen.sequenceValue = 100000
-	assertEqualS("0c8w8", suffixGen.ToString(), "foo.seedee: 100000", t)
+	assertEqualS("0c1p0", suffixGen.ToString(), "foo.seedee: 100000", t)
 
 	// TODO: Test overflow
 }
@@ -52,11 +55,13 @@ func TestSuffixGeneration_zdd(t *testing.T) {
 	suffixGen.sequenceValue = 1
 	assertEqualS("01", suffixGen.ToString(), "foo.zdd: 1", t)
 
-	suffixGen.sequenceValue = 1000
-	assertEqualS("1000", suffixGen.ToString(), "foo.zdd: 1000", t)
+  // Verify octals real quick
+	suffixGen.sequenceValue = 01000
+	assertEqualS("1000", suffixGen.ToString(), "foo.zdd: 01000", t)
 
-	suffixGen.sequenceValue = 100000
-	assertEqualS("100000", suffixGen.ToString(), "foo.zdd: 100000", t)
+  // And verify octals again!
+	suffixGen.sequenceValue = 0100000
+	assertEqualS("100000", suffixGen.ToString(), "foo.zdd: 0100000", t)
 }
 
 func TestSuffixMaximum(t *testing.T) {
@@ -64,19 +69,19 @@ func TestSuffixMaximum(t *testing.T) {
 	var g *SuffixGenerator
 
 	template, _ = NewTemplate("sdd")
-	g = NewSuffixGenerator(template, 99)
+	g = NewSuffixGenerator(template, uint64(math.Exp2(3 + 3)) - 1)
 	assertEqualUint64(g.sequenceValue, g.maxSequence, "Max sequence for sdd", t)
-	assertEqualS("99", g.ToString(), "Suffix using maximum sequence", t)
+	assertEqualS("77", g.ToString(), "Suffix using maximum sequence", t)
 
 	template, _ = NewTemplate("sedd")
-	g = NewSuffixGenerator(template, 2899)
+	g = NewSuffixGenerator(template, uint64(math.Exp2(5 + 3 + 3)) - 1)
 	assertEqualUint64(g.sequenceValue, g.maxSequence, "Max sequence for sedd", t)
-	assertEqualS("z99", g.ToString(), "Suffix using maximum sequence", t)
+	assertEqualS("z77", g.ToString(), "Suffix using maximum sequence", t)
 
 	template, _ = NewTemplate("sdedd")
-	g = NewSuffixGenerator(template, 28999)
+	g = NewSuffixGenerator(template, uint64(math.Exp2(3 + 5 + 3 + 3)) - 1)
 	assertEqualUint64(g.sequenceValue, g.maxSequence, "Max sequence for sdedd", t)
-	assertEqualS("9z99", g.ToString(), "Suffix using maximum sequence", t)
+	assertEqualS("7z77", g.ToString(), "Suffix using maximum sequence", t)
 
 	template, _ = NewTemplate("zdd")
 	g = NewSuffixGenerator(template, 0)
@@ -99,13 +104,13 @@ func TestRandomNoids(t *testing.T) {
 
 	template, _ = NewTemplate("reedee")
 	g = NewSuffixGenerator(template, 0)
-	assertEqualS("tv2xz", g.ToString(), "reedee @ first sequence", t)
+	assertEqualS("vw5yz", g.ToString(), "reedee @ first sequence", t)
 
 	g.sequenceValue = g.maxSequence / 2
-	assertEqualS("9b6wx", g.ToString(), "reedee @ middle sequence", t)
+	assertEqualS("av4xy", g.ToString(), "reedee @ middle sequence", t)
 
 	g.sequenceValue = g.maxSequence
-	assertEqualS("st1wx", g.ToString(), "reedee @ last sequence", t)
+	assertEqualS("uv4xy", g.ToString(), "reedee @ last sequence", t)
 }
 
 func TestRandomNoidsDontRepeat(t *testing.T) {
@@ -135,11 +140,11 @@ func TestManualSeeding(t *testing.T) {
 	template, _ = NewTemplate("reedee")
 	g = NewSuffixGenerator(template, 0)
 	g.Seed(8675309)
-	assertEqualS("fg7jk", g.ToString(), "reedee @ first sequence", t)
+	assertEqualS("9a3cd", g.ToString(), "reedee @ first sequence", t)
 
 	g.sequenceValue = g.maxSequence / 2
-	assertEqualS("xz1hj", g.ToString(), "reedee @ middle sequence", t)
+	assertEqualS("s92bc", g.ToString(), "reedee @ middle sequence", t)
 
 	g.sequenceValue = g.maxSequence
-	assertEqualS("df6hj", g.ToString(), "reedee @ last sequence", t)
+	assertEqualS("892bc", g.ToString(), "reedee @ last sequence", t)
 }

@@ -7,8 +7,13 @@ import (
 	"errors"
 )
 
-const Digits = "0123456789"
-const ExtendedDigits = "0123456789bcdfghjkmnpqrstvwxz"
+// "d" is basically an octal value - this means each "d" uses precisely 3 bits
+const Digits = "01234567"
+const DigitBase = 8
+
+// "e" is always a range of 32 characters - 5 bits
+const ExtendedDigits = "0123456789abcdfghjkmnpqrstuvwxyz"
+const ExtendedDigitBase = 32
 
 type SuffixContainer [MaxMaskLength]rune
 
@@ -129,8 +134,8 @@ func (nsc *SuffixContainer) toString(length int) string {
 // character will be using
 func baseForMaskCharacter(char rune) uint64 {
 	if char == 'd' {
-		return 10
+		return DigitBase
 	}
 
-	return 29
+	return ExtendedDigitBase
 }
