@@ -24,6 +24,7 @@ type SuffixGenerator struct {
 	minLength int
 	suffix SuffixContainer
 	reverseMaskBits []byte
+	totalBits byte
 	ordering Ordering
 	seed uint64
 }
@@ -76,13 +77,13 @@ func (nsg *SuffixGenerator) Seed(newSeed uint64) {
 // mask array) for each character.  This is useful for both types of limited
 // sequences to determine before computation if the sequence value is too high.
 func (nsg *SuffixGenerator) computeMaxSequenceValue() {
-	var totalBits byte
+	nsg.totalBits = 0
 
 	for _, bits := range(nsg.reverseMaskBits) {
-		totalBits += byte(bits)
+		nsg.totalBits += bits
 	}
 
-	nsg.maxSequence = 1 << totalBits - 1
+	nsg.maxSequence = (1 << nsg.totalBits) - 1
 }
 
 // Returns the noid suffix for the given suffix generator - uses value, not
