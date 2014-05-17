@@ -15,6 +15,9 @@ const DigitBits = 3
 const ExtendedDigits = "0123456789abcdfghjkmnpqrstuvwxyz"
 const ExtendedDigitBits = 5
 
+// Maximum possible mask within 64 bits (if using "d" for all characters)
+const MaxMaskLength = 21
+
 type SuffixContainer [MaxMaskLength]rune
 
 type SuffixGenerator struct {

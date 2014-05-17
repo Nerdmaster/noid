@@ -3,7 +3,6 @@ package noid
 import (
 	"strings"
 	"errors"
-	"fmt"
 )
 
 type Ordering int
@@ -21,13 +20,6 @@ type Template struct {
 	hasCheckDigit bool
 }
 
-// 14-character masks can theoretically result in a string that can't be
-// represented by a uint64 index, and for now I want all noids to be easily
-// converted to and from a raw number.  13 characters, if all are using the
-// "extended" set, is still enough to hold over 10 quintillion (10 billion
-// billion) noids.
-const MaxMaskLength = 13
-
 func NewTemplate(template string) (*Template, error) {
 	var suffix string
 	var err error
@@ -44,10 +36,6 @@ func NewTemplate(template string) (*Template, error) {
 	}
 
 	t.mask = suffix[1:]
-
-	if len(t.mask) > MaxMaskLength {
-		return nil, errors.New(fmt.Sprintf("Mask cannot be more than %d characters", MaxMaskLength))
-	}
 
 	return t, nil
 }

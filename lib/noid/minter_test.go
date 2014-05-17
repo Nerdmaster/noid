@@ -23,3 +23,17 @@ func TestMintingWithNoPrefix(t *testing.T) {
 	}
 	assertEqualS("z9", minter.Mint(), "zee one-thousand-first mint", t)
 }
+
+func TestTemplateBitMaximums(t *testing.T) {
+	str := "redededededededed"
+	_, err := NewMinter(str, 0)
+	if err != nil {
+		t.Errorf("%s shouldn't have been too big (64 bits)!", str)
+	}
+
+	str = "reeeeeeeeeeeee"
+	_, err = NewMinter(str, 0)
+	if err == nil {
+		t.Errorf("%s should have been too big (65 bits)!", str)
+	}
+}
