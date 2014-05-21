@@ -38,3 +38,9 @@ func TestBitSwap(t *testing.T) {
 	value = bitSwap(value, 6, 8)
 	assertEqualUint64(306, value, "585 fifth swap", t)
 }
+
+func TestArgOrdering(t *testing.T) {
+	// 0101 -> 0101
+	value := bitSwap(6, 3, 1)
+	assertEqualUint64(12, value, "Swapping bits 3 and 1 is the same as swapping bits 1 and 3 dummy", t)
+}
