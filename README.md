@@ -38,15 +38,15 @@ unnecessary overhead and confusion:
     sequential-plus-xor approach, with a random xor, would have been better.
     (Actually, I may just do this for the "random" ordering in this app....)
 - The full spec defines all kinds of operations on noids, which, to me, seem
-  oddly specific.  The concept is to have IDs without meaning.  The Perl
-  implementation ends up blending with the spec to give us this insanely
-  full-featured storage and retrieval system... even though databases are
-  already a pretty well-solved problem.  My go-based service won't have all
-  those database-type features, as it's a huge waste of effort to try and
-  accommodate every use case for opaque IDs.  A simple micro-service is a lot
-  more useful than something bloated and high-maintenance that tries to be
-  everything to everyone.  That kind of philosophy is, in my opinion, one
-  reason library technology is so incompatible with what everybody else uses.
+  oddly specific.  I'm okay with the core concept of meaningless identifiers,
+  but the spec ends up defining operations on a database, blending a simple
+  concept with very implementation-specific details.
+  - My go-based service won't have all those database-type features, as it's a
+    huge waste of effort to try and accommodate every use case for opaque IDs.
+  - As an aside, I think this general "make the spec / tool do everything for
+    every possible use case we can ever imagine" philosophy is exactly why we
+    (libraries) end up being so incompatible with the rest of the world
+    technologically.
 - I'm not sold on needing to prevent transcription errors.  Removing the letter
   "L", and having an optional check-digit?  Waste of thought, unnecessary code
   complexity.  Transcription errors will still fail, just less often.  Better
