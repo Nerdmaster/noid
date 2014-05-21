@@ -7,8 +7,16 @@ import (
 	"errors"
 )
 
-const Digits = "0123456789"
-const ExtendedDigits = "0123456789bcdfghjkmnpqrstvwxz"
+// "d" is basically an octal value - this means each "d" uses precisely 3 bits
+const Digits = "01234567"
+const DigitBits = 3
+
+// "e" is always a range of 32 characters - 5 bits
+const ExtendedDigits = "0123456789abcdfghjkmnpqrstuvwxyz"
+const ExtendedDigitBits = 5
+
+// Maximum possible mask within 64 bits (if using "d" for all characters)
+const MaxMaskLength = 21
 
 type SuffixContainer [MaxMaskLength]rune
 
@@ -18,9 +26,9 @@ type SuffixGenerator struct {
 	index int
 	minLength int
 	suffix SuffixContainer
-	reverseMaskBases []uint64
+	reverseMaskBits []byte
+	totalBits byte
 	ordering Ordering
-	seed uint64
 }
 
 // Utility for easing the template mask reversal
@@ -38,21 +46,15 @@ func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerat
 	nsg.minLength = len(template.mask)
 
 	reverseMask := stringReverseRunes(template.mask)
-	nsg.reverseMaskBases = make([]uint64, nsg.minLength)
+	nsg.reverseMaskBits = make([]byte, nsg.minLength)
 	for i, char := range(reverseMask) {
-		nsg.reverseMaskBases[i] = baseForMaskCharacter(char)
+		nsg.reverseMaskBits[i] = bitsForMaskCharacter(char)
 	}
 
 	if nsg.ordering == SequentialUnlimited {
 		nsg.maxSequence = math.MaxUint64
 	} else {
 		nsg.computeMaxSequenceValue()
-	}
-
-	// I dunno the right approach here - we want to be able to mint "random"
-	// noids, but keep them predictable for a given template.
-	if nsg.ordering == Random {
-		nsg.seed = nsg.maxSequence / 2
 	}
 
 	if nsg.sequenceValue > nsg.maxSequence {
@@ -62,27 +64,62 @@ func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerat
 	return nsg
 }
 
-// Modifies seed, allowing for more randomness if an application needs this
-func (nsg *SuffixGenerator) Seed(newSeed uint64) {
-	nsg.seed = newSeed
-}
-
-// Computes the maximum sequence value by examining the bases (from the reverse
+// Computes the maximum sequence value by examining the bit size (from the reverse
 // mask array) for each character.  This is useful for both types of limited
 // sequences to determine before computation if the sequence value is too high.
 func (nsg *SuffixGenerator) computeMaxSequenceValue() {
-	var multiplier uint64 = 1
-	nsg.maxSequence = 0
+	nsg.totalBits = 0
 
-	for _, base := range(nsg.reverseMaskBases) {
-		nsg.maxSequence += multiplier * (base - 1)
-		multiplier *= base
+	for _, bits := range(nsg.reverseMaskBits) {
+		nsg.totalBits += bits
 	}
+
+	nsg.maxSequence = (1 << nsg.totalBits) - 1
+}
+
+// Shuffles bits and xors stuff to map one sequence to another
+//
+// TODO: Cache bit pairs so we don't recompute this on every single iteration
+func (nsg *SuffixGenerator) randomizeSequence() {
+	var maxBit byte = nsg.totalBits - 1
+	var bitIndex byte
+
+	// 2/3 of the max value gives us a repeating "1010..." bit pattern, which is
+	// a decent xor value to start with
+	xor := nsg.maxSequence * 2 / 3
+
+	// Create a changing seed based on our xor value for bit swapping "randomness"
+	seed := xor
+
+	// Temporary local var to ease code (and possibly avoid indirection)
+	sval := nsg.sequenceValue ^ xor
+
+	// Make sure the lowest bits are distributed a little - we always have at
+	// least three bits, so this will never crash, though it won't necessarily be
+	// all that useful, either.
+	//
+	// 3 bits:  0 and 2 			1 and 1
+	// 5 bits:  0 and 3 			1 and 2
+	// 20 bits: 0 and 18			1 and 9
+	sval = bitSwap(sval, 0, maxBit - 1)
+	sval = bitSwap(sval, 1, maxBit >> 1)
+
+	for bitIndex = 3; bitIndex < maxBit; bitIndex++ {
+		bit2 := seed % uint64(nsg.totalBits)
+		sval = bitSwap(sval, bitIndex, byte(bit2))
+		seed = seed >> 1
+	}
+
+	nsg.sequenceValue = sval
 }
 
 // Returns the noid suffix for the given suffix generator - uses value, not
 // pointer, to avoid altering the internal data
 func (nsg SuffixGenerator) ToString() string {
+	if nsg.ordering == Random {
+		nsg.randomizeSequence()
+	}
+
 	for nsg.sequenceValue > 0 || nsg.index < nsg.minLength {
 		nsg.addCharacter()
 	}
@@ -101,23 +138,16 @@ func (nsg *SuffixGenerator) NextSequence() error {
 
 // Based on mask, ordering, and nsg state, prepends the next noid suffix char
 func (nsg *SuffixGenerator) addCharacter() {
-	base := nsg.reverseMaskBases[0]
-	if len(nsg.reverseMaskBases) > 1 {
-		nsg.reverseMaskBases = nsg.reverseMaskBases[1:]
+	bits := nsg.reverseMaskBits[0]
+	if len(nsg.reverseMaskBits) > 1 {
+		nsg.reverseMaskBits = nsg.reverseMaskBits[1:]
 	}
 
-	val := nsg.sequenceValue
-
-	if nsg.ordering == Random {
-		val += nsg.seed
-		nsg.seed -= 1
-	}
-
-	val %= base
+	val := nsg.sequenceValue & ((1 << bits) - 1)
 
 	templateChar := rune(ExtendedDigits[val])
 	nsg.suffix[MaxMaskLength - 1 - nsg.index] = templateChar
-	nsg.sequenceValue /= base
+	nsg.sequenceValue >>= bits
 	nsg.index++
 }
 
@@ -125,12 +155,11 @@ func (nsc *SuffixContainer) toString(length int) string {
 	return string(nsc[MaxMaskLength - length:MaxMaskLength])
 }
 
-// Uses hard-coded values 10 and 29 to quickly return the base a given
-// character will be using
-func baseForMaskCharacter(char rune) uint64 {
+// Returns bit constants for a given mask character
+func bitsForMaskCharacter(char rune) byte {
 	if char == 'd' {
-		return 10
+		return DigitBits
 	}
 
-	return 29
+	return ExtendedDigitBits
 }

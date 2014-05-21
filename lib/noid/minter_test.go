@@ -10,7 +10,7 @@ func TestMinting(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		minter.Mint()
 	}
-	assertEqualS("foo.0015h", minter.Mint(), "foo.seedee one-thousand-first mint", t)
+	assertEqualS("foo.000z9", minter.Mint(), "foo.seedee one-thousand-first mint", t)
 }
 
 func TestMintingWithNoPrefix(t *testing.T) {
@@ -21,5 +21,19 @@ func TestMintingWithNoPrefix(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		minter.Mint()
 	}
-	assertEqualS("15h", minter.Mint(), "zee one-thousand-first mint", t)
+	assertEqualS("z9", minter.Mint(), "zee one-thousand-first mint", t)
+}
+
+func TestTemplateBitMaximums(t *testing.T) {
+	str := "redededededededed"
+	_, err := NewMinter(str, 0)
+	if err != nil {
+		t.Errorf("%s shouldn't have been too big (64 bits)!", str)
+	}
+
+	str = "reeeeeeeeeeeee"
+	_, err = NewMinter(str, 0)
+	if err == nil {
+		t.Errorf("%s should have been too big (65 bits)!", str)
+	}
 }

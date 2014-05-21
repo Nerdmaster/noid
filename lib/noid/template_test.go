@@ -40,18 +40,6 @@ func TestTemplatesWithoutPrefix(t *testing.T) {
 	assertTemplateAttributeB(str, "hasCheckDigit", true, template.hasCheckDigit, t)
 }
 
-func TestLongTemplates(t *testing.T) {
-	str := "prefix.reedeedeedeedeedeedeedeedeek"
-	template, err := NewTemplate(str)
-	if template != nil {
-		t.Errorf("Expected %#v to be invalid, but template was %#v", str, template)
-	}
-
-	if err == nil {
-		t.Errorf("Expected %#v to be invalid, but err was nil", str)
-	}
-}
-
 func TestBadOrder(t *testing.T) {
 	str := "foo.xeedee"
 	template, err := NewTemplate(str)
