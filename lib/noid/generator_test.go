@@ -104,13 +104,13 @@ func TestRandomNoids(t *testing.T) {
 
 	template, _ = NewTemplate("reedee")
 	g = NewSuffixGenerator(template, 0)
-	assertEqualS("vw5yz", g.ToString(), "reedee @ first sequence", t)
+	assertEqualS("q67j4", g.ToString(), "reedee @ sequence 0", t)
 
 	g.sequenceValue = g.maxSequence / 2
-	assertEqualS("av4xy", g.ToString(), "reedee @ middle sequence", t)
+	assertEqualS("tt0fv", g.ToString(), "reedee @ middle sequence", t)
 
 	g.sequenceValue = g.maxSequence
-	assertEqualS("uv4xy", g.ToString(), "reedee @ last sequence", t)
+	assertEqualS("9t0fv", g.ToString(), "reedee @ last sequence", t)
 }
 
 func TestRandomNoidsDontRepeat(t *testing.T) {
@@ -131,20 +131,4 @@ func TestRandomNoidsDontRepeat(t *testing.T) {
 		seen[g.ToString()] = true
 		err = g.NextSequence()
 	}
-}
-
-func TestManualSeeding(t *testing.T) {
-	var template *Template
-	var g *SuffixGenerator
-
-	template, _ = NewTemplate("reedee")
-	g = NewSuffixGenerator(template, 0)
-	g.Seed(8675309)
-	assertEqualS("9a3cd", g.ToString(), "reedee @ first sequence", t)
-
-	g.sequenceValue = g.maxSequence / 2
-	assertEqualS("s92bc", g.ToString(), "reedee @ middle sequence", t)
-
-	g.sequenceValue = g.maxSequence
-	assertEqualS("892bc", g.ToString(), "reedee @ last sequence", t)
 }
