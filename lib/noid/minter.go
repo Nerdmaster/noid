@@ -2,6 +2,7 @@ package noid
 
 import(
 	"errors"
+	"strings"
 )
 
 type Minter struct {
@@ -31,5 +32,24 @@ func (minter *Minter) Mint() string {
 		return noidSuffix
 	}
 
-	return minter.template.prefix + "." + noidSuffix
+	result := minter.template.prefix + "." + noidSuffix
+
+	if minter.template.hasCheckDigit {
+		result = result + string(computeCheckDigit(result))
+	}
+
+	return result
+}
+
+func computeCheckDigit(s string) rune {
+	tally := 0
+	runes := []rune(ExtendedDigits)
+	for index, ch := range s {
+		idx := strings.IndexRune(ExtendedDigits, ch)
+		if idx == -1 {
+			idx = 0
+		}
+		tally += idx * (1 + index)
+	}
+	return runes[tally % len(ExtendedDigits)]
 }

@@ -37,3 +37,19 @@ func TestTemplateBitMaximums(t *testing.T) {
 		t.Errorf("%s should have been too big (65 bits)!", str)
 	}
 }
+
+func TestCheckdigitMagic(t *testing.T) {
+	// It looks the same as above except for the check digit
+	str := "foo.seedeek"
+	minter, _ := NewMinter(str, 0)
+	assertEqualS("foo.00000f", minter.Mint(), "foo.seedeek first mint", t)
+	minter, _ = NewMinter(str, 1001)
+	assertEqualS("foo.000z9r", minter.Mint(), "foo.seedeek one-thousand-first mint", t)
+
+	// And the prefix matters for determining check digits... for some odd reason.
+	str = "bar.seedeek"
+	minter, _ = NewMinter(str, 0)
+	assertEqualS("bar.000004", minter.Mint(), "bar.seedeek first mint", t)
+	minter, _ = NewMinter(str, 1001)
+	assertEqualS("bar.000z9d", minter.Mint(), "bar.seedeek one-thousand-first mint", t)
+}
