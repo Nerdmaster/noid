@@ -53,3 +53,12 @@ func TestCheckdigitMagic(t *testing.T) {
 	minter, _ = NewMinter(str, 1001)
 	assertEqualS("bar.000z9d", minter.Mint(), "bar.seedeek one-thousand-first mint", t)
 }
+
+func TestCheckDigitWorksWithNoPrefix(t *testing.T) {
+	// You don't need a prefix for a check-digit to exist!
+	str := "seedeek"
+	minter, _ := NewMinter(str, 0)
+	assertEqualS("000000", minter.Mint(), "seedeek first mint", t)
+	minter, _ = NewMinter(str, 1001)
+	assertEqualS("000z99", minter.Mint(), "seedeek one-thousand-first mint", t)
+}

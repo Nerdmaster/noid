@@ -25,14 +25,12 @@ func NewMinter(template string, startSequence uint64) (*Minter, error) {
 }
 
 func (minter *Minter) Mint() string {
-	noidSuffix := minter.generator.ToString()
+	result := minter.generator.ToString()
 	minter.generator.NextSequence()
 
-	if minter.template.prefix == "" {
-		return noidSuffix
+	if minter.template.prefix != "" {
+		result = minter.template.prefix + "." + result
 	}
-
-	result := minter.template.prefix + "." + noidSuffix
 
 	if minter.template.hasCheckDigit {
 		result = result + string(computeCheckDigit(result))
