@@ -7,13 +7,9 @@ import (
 	"errors"
 )
 
-// "d" is basically an octal value - this means each "d" uses precisely 3 bits
-const Digits = "01234567"
 const DigitBits = 3
-
-// "e" is always a range of 32 characters - 5 bits
-const ExtendedDigits = "0123456789abcdfghjkmnpqrstuvwxyz"
 const ExtendedDigitBits = 5
+const ExtendedDigits = "0123456789abcdfghjkmnpqrstuvwxyz"
 
 // Maximum possible mask within 64 bits (if using "d" for all characters)
 const MaxMaskLength = 21
