@@ -20,6 +20,24 @@ const MaxMaskLength = 21
 
 type SuffixContainer [MaxMaskLength]rune
 
+// TODO: break this down - this type is being used both as a long-lived
+// generator object as well as a temporary, highly mutable data container
+// during generation.  Ideally they'd be separate types given the data:
+//
+// - sequenceValue is used as the current counter for a given generator, but
+//   also serves as the remaining counter data as we divide it during
+//   generation
+// - maxSequence serves to check on data sanity when incrementing a generator's
+//   counter, but has no application during generation
+// - index has no application in a generator and is only used during generation
+// - minLength is set once and referred to during generation, but never altered
+// - suffix is used only during generation
+// - reverseMaskBits is set by the generator, but only needs to be set up just
+//   prior to generation
+// - totalBits is useful for setting up generation-specific bitswapping on
+//   randomly-ordered noids, but shouldn't be needed during generation
+// - ordering should only be necessary for the generator to set up data the
+//   generation process uses
 type SuffixGenerator struct {
 	sequenceValue uint64
 	maxSequence uint64
