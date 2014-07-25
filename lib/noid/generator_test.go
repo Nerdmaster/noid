@@ -55,11 +55,11 @@ func TestSuffixGeneration_zdd(t *testing.T) {
 	suffixGen.sequenceValue = 1
 	assertEqualS("01", suffixGen.ToString(), "foo.zdd: 1", t)
 
-  // Verify octals real quick
+	// Verify octals real quick
 	suffixGen.sequenceValue = 01000
 	assertEqualS("1000", suffixGen.ToString(), "foo.zdd: 01000", t)
 
-  // And verify octals again!
+	// And verify octals again!
 	suffixGen.sequenceValue = 0100000
 	assertEqualS("100000", suffixGen.ToString(), "foo.zdd: 0100000", t)
 }
