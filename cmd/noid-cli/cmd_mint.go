@@ -17,7 +17,7 @@ func mintUsageError(message string) {
 func mintUsage() {
 	fmt.Println("Usage: noid-cli mint immediate TEMPLATE SEQUENCE")
 	fmt.Println("")
-	fmt.Println("Usage: noid-cli mint start TEMPLATE")
+	fmt.Println("Usage: noid-cli mint init TEMPLATE")
 	fmt.Println("       noid-cli mint next")
 	fmt.Println("")
 }
@@ -31,9 +31,9 @@ func cmdMintHelp() {
 	fmt.Println("    noid-cli mint immediate reedeek 27")
 	fmt.Println("")
 	fmt.Println(`Using the "next" sub-command requires a noid database in the current working`)
-	fmt.Println(`directory.  This can be created with the "start" sub-command, e.g.:`)
+	fmt.Println(`directory.  This can be created with the "init" sub-command, e.g.:`)
 	fmt.Println("")
-	fmt.Println("    noid-cli mint start reedeek      # Creates noid.db")
+	fmt.Println("    noid-cli mint init reedeek      # Creates noid.db")
 	fmt.Println("    noid-cli mint next               # Mints XXXXXX")
 	fmt.Println("    noid-cli mint next               # Mints XXXXXX")
 	os.Exit(1)
@@ -64,7 +64,7 @@ func cmdMint(args []string) {
 		fn = cmdMintImmediate
 		argCount = 2
 
-	case "start":
+	case "init":
 		fn = cmdCreateDatabase
 		argCount = 1
 
