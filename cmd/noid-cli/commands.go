@@ -1,7 +1,7 @@
 package main
 
 type Command struct {
-	handler func([]string)
+	handler     func([]string)
 	helpHandler func()
 	helpSummary string
 }
