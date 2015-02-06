@@ -1,18 +1,18 @@
 package noid
 
 import (
-	"testing"
 	"math"
+	"testing"
 )
 
 func assertEqualUint64(expected, actual uint64, message string, t *testing.T) {
-	if (expected != actual) {
+	if expected != actual {
 		t.Errorf("Expected %d, but got %d - %s", expected, actual, message)
 	}
 }
 
 func assertEqualS(expected, actual string, message string, t *testing.T) {
-	if (expected != actual) {
+	if expected != actual {
 		t.Errorf("Expected %#v, but got %#v - %s", expected, actual, message)
 	}
 }
@@ -69,17 +69,17 @@ func TestSuffixMaximum(t *testing.T) {
 	var g *SuffixGenerator
 
 	template, _ = NewTemplate("sdd")
-	g = NewSuffixGenerator(template, uint64(math.Exp2(3 + 3)) - 1)
+	g = NewSuffixGenerator(template, uint64(math.Exp2(3+3))-1)
 	assertEqualUint64(g.sequenceValue, g.maxSequence, "Max sequence for sdd", t)
 	assertEqualS("77", g.ToString(), "Suffix using maximum sequence", t)
 
 	template, _ = NewTemplate("sedd")
-	g = NewSuffixGenerator(template, uint64(math.Exp2(5 + 3 + 3)) - 1)
+	g = NewSuffixGenerator(template, uint64(math.Exp2(5+3+3))-1)
 	assertEqualUint64(g.sequenceValue, g.maxSequence, "Max sequence for sedd", t)
 	assertEqualS("z77", g.ToString(), "Suffix using maximum sequence", t)
 
 	template, _ = NewTemplate("sdedd")
-	g = NewSuffixGenerator(template, uint64(math.Exp2(3 + 5 + 3 + 3)) - 1)
+	g = NewSuffixGenerator(template, uint64(math.Exp2(3+5+3+3))-1)
 	assertEqualUint64(g.sequenceValue, g.maxSequence, "Max sequence for sdedd", t)
 	assertEqualS("7z77", g.ToString(), "Suffix using maximum sequence", t)
 

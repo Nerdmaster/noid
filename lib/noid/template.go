@@ -1,8 +1,8 @@
 package noid
 
 import (
-	"strings"
 	"errors"
+	"strings"
 )
 
 type Ordering int
@@ -14,9 +14,9 @@ const (
 )
 
 type Template struct {
-	prefix string
-	ordering Ordering
-	mask string
+	prefix        string
+	ordering      Ordering
+	mask          string
 	hasCheckDigit bool
 }
 
@@ -71,10 +71,14 @@ func getOrderingFromChar(c byte) (Ordering, error) {
 	err = nil
 
 	switch c {
-		case 'r': order = Random
-		case 's': order = SequentialLimited
-		case 'z': order = SequentialUnlimited
-		default: err = errors.New("Ordering character must be 'r', 's', or 'z'")
+	case 'r':
+		order = Random
+	case 's':
+		order = SequentialLimited
+	case 'z':
+		order = SequentialUnlimited
+	default:
+		err = errors.New("Ordering character must be 'r', 's', or 'z'")
 	}
 
 	return order, err

@@ -3,8 +3,8 @@
 package noid
 
 import (
-	"math"
 	"errors"
+	"math"
 )
 
 const DigitBits = 3
@@ -35,14 +35,14 @@ type SuffixContainer [MaxMaskLength]rune
 // - ordering should only be necessary for the generator to set up data the
 //   generation process uses
 type SuffixGenerator struct {
-	sequenceValue uint64
-	maxSequence uint64
-	index int
-	minLength int
-	suffix SuffixContainer
+	sequenceValue   uint64
+	maxSequence     uint64
+	index           int
+	minLength       int
+	suffix          SuffixContainer
 	reverseMaskBits []byte
-	totalBits byte
-	ordering Ordering
+	totalBits       byte
+	ordering        Ordering
 }
 
 // Utility for easing the template mask reversal
@@ -55,13 +55,13 @@ func stringReverseRunes(s string) []rune {
 }
 
 func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerator {
-	nsg := &SuffixGenerator {sequenceValue: sequenceValue}
+	nsg := &SuffixGenerator{sequenceValue: sequenceValue}
 	nsg.ordering = template.ordering
 	nsg.minLength = len(template.mask)
 
 	reverseMask := stringReverseRunes(template.mask)
 	nsg.reverseMaskBits = make([]byte, nsg.minLength)
-	for i, char := range(reverseMask) {
+	for i, char := range reverseMask {
 		nsg.reverseMaskBits[i] = bitsForMaskCharacter(char)
 	}
 
@@ -84,7 +84,7 @@ func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerat
 func (nsg *SuffixGenerator) computeMaxSequenceValue() {
 	nsg.totalBits = 0
 
-	for _, bits := range(nsg.reverseMaskBits) {
+	for _, bits := range nsg.reverseMaskBits {
 		nsg.totalBits += bits
 	}
 
@@ -115,8 +115,8 @@ func (nsg *SuffixGenerator) randomizeSequence() {
 	// 3 bits:  0 and 2 			1 and 1
 	// 5 bits:  0 and 3 			1 and 2
 	// 20 bits: 0 and 18			1 and 9
-	sval = bitSwap(sval, 0, maxBit - 1)
-	sval = bitSwap(sval, 1, maxBit >> 1)
+	sval = bitSwap(sval, 0, maxBit-1)
+	sval = bitSwap(sval, 1, maxBit>>1)
 
 	for bitIndex = 3; bitIndex < maxBit; bitIndex++ {
 		bit2 := seed % uint64(nsg.totalBits)
@@ -160,13 +160,13 @@ func (nsg *SuffixGenerator) addCharacter() {
 	val := nsg.sequenceValue & ((1 << bits) - 1)
 
 	templateChar := rune(ExtendedDigits[val])
-	nsg.suffix[MaxMaskLength - 1 - nsg.index] = templateChar
+	nsg.suffix[MaxMaskLength-1-nsg.index] = templateChar
 	nsg.sequenceValue >>= bits
 	nsg.index++
 }
 
 func (nsc *SuffixContainer) toString(length int) string {
-	return string(nsc[MaxMaskLength - length:MaxMaskLength])
+	return string(nsc[MaxMaskLength-length : MaxMaskLength])
 }
 
 // Returns bit constants for a given mask character

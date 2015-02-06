@@ -3,19 +3,19 @@ package noid
 import "testing"
 
 func assertTemplateAttributeS(templateString, attribute, expected, actual string, t *testing.T) {
-	if (expected != actual) {
+	if expected != actual {
 		t.Errorf("Expected %#v to have %s %#v, but got %#v", templateString, attribute, expected, actual)
 	}
 }
 
 func assertTemplateAttributeO(templateString string, attribute string, expected Ordering, actual Ordering, t *testing.T) {
-	if (expected != actual) {
+	if expected != actual {
 		t.Errorf("Expected %#v to have %s %#v, but got %#v", templateString, attribute, expected, actual)
 	}
 }
 
 func assertTemplateAttributeB(templateString string, attribute string, expected bool, actual bool, t *testing.T) {
-	if (expected != actual) {
+	if expected != actual {
 		t.Errorf("Expected %#v to have %s %#v, but got %#v", templateString, attribute, expected, actual)
 	}
 }

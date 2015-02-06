@@ -1,12 +1,12 @@
 package noid
 
-import(
+import (
 	"errors"
 	"strings"
 )
 
 type Minter struct {
-	template *Template
+	template  *Template
 	generator *SuffixGenerator
 }
 
@@ -53,5 +53,5 @@ func computeCheckDigit(s string) rune {
 		}
 		tally += idx * (1 + index)
 	}
-	return runes[tally % len(ExtendedDigits)]
+	return runes[tally%len(ExtendedDigits)]
 }
