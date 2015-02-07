@@ -127,6 +127,10 @@ func (nsg *SuffixGenerator) randomizeSequence() {
 	nsg.sequenceValue = sval
 }
 
+func (nsg SuffixGenerator) Sequence() uint64 {
+	return nsg.sequenceValue
+}
+
 // Returns the noid suffix for the given suffix generator - uses value, not
 // pointer, to avoid altering the internal data
 func (nsg SuffixGenerator) ToString() string {
