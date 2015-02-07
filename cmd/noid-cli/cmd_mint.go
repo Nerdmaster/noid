@@ -33,9 +33,9 @@ func cmdMintHelp() {
 	fmt.Println(`Using the "next" sub-command requires a noid database in the current working`)
 	fmt.Println(`directory.  This can be created with the "init" sub-command, e.g.:`)
 	fmt.Println("")
-	fmt.Println("    noid-cli mint init reedeek      # Creates noid.db")
-	fmt.Println("    noid-cli mint next               # Mints XXXXXX")
-	fmt.Println("    noid-cli mint next               # Mints XXXXXX")
+	fmt.Println("    noid-cli mint init reedeek       # Creates noid.db with serialized minter")
+	fmt.Println("    noid-cli mint next               # Prints out q67j4g")
+	fmt.Println("    noid-cli mint next               # Prints out y67j4r")
 	os.Exit(1)
 }
 
