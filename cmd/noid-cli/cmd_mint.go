@@ -100,9 +100,34 @@ func cmdMintImmediate(args []string) {
 }
 
 func cmdCreateDatabase(args []string) {
-	fmt.Println("Not implemented")
+	// First make sure we can create the file - it MUST be a new file
+	f, err := os.OpenFile("noid.db", os.O_CREATE|os.O_EXCL|os.O_RDWR, 0660)
+	if err != nil {
+		mintUsageError(fmt.Sprintf("Unable to create noid.db: %s", err))
+	}
+	defer f.Close()
+
+	// Now make sure the template is legit
+	template := args[0]
+	m, err := noid.NewMinter(template)
+	if err != nil {
+		mintUsageError(fmt.Sprintf("Unable to create a minter with template %s: %s", err))
+	}
+
+	m.WriteJSON(f)
 }
 
 func cmdMintNext([]string) {
-	fmt.Println("Not implemented")
+	m, err := noid.NewMinterFromJSONFile("noid.db")
+	if err != nil {
+		mintUsageError(fmt.Sprintf("Error building minter from noid.db: %s", err))
+	}
+	fmt.Println(m.Mint())
+
+	f, err := os.OpenFile("noid.db", os.O_RDWR, 0660)
+	if err != nil {
+		mintUsageError(fmt.Sprintf("Unable to re-serialize minter: %s", err))
+	}
+	defer f.Close()
+	m.WriteJSON(f)
 }
