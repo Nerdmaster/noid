@@ -20,6 +20,9 @@ func NewSequencedMinter(template string, startSequence uint64) (*Minter, error) 
 		return nil, err
 	}
 	g := NewSuffixGenerator(t, startSequence)
+	if g == nil {
+		return nil, errors.New("Minter sequence value too high")
+	}
 	if g.totalBits > 64 {
 		return nil, errors.New("Template range is too big!  Try a shorter template mask string.")
 	}
