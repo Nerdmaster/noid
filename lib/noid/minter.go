@@ -31,6 +31,14 @@ func NewSequencedMinter(template string, startSequence uint64) (*Minter, error) 
 	return minter, nil
 }
 
+func (m *Minter) Template() string {
+	return m.template.String()
+}
+
+func (m *Minter) Sequence() uint64 {
+	return m.generator.Sequence()
+}
+
 func (minter *Minter) Mint() string {
 	result := minter.generator.ToString()
 	minter.generator.NextSequence()

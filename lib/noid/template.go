@@ -14,10 +14,11 @@ const (
 )
 
 type Template struct {
-	Prefix        string
-	Ordering      Ordering
-	Mask          string
-	HasCheckDigit bool
+	Prefix         string
+	Ordering       Ordering
+	Mask           string
+	HasCheckDigit  bool
+	templateString string
 }
 
 func NewTemplate(template string) (*Template, error) {
@@ -26,7 +27,7 @@ func NewTemplate(template string) (*Template, error) {
 
 	// You know what's hip and cool these days?  Storing values immediately on
 	// instantiation when said values are essentially static, read-only data
-	t := &Template{}
+	t := &Template{templateString: template}
 	t.Prefix, suffix = splitTemplateString(template)
 	t.HasCheckDigit, suffix = getCheckDigitFromSuffix(suffix)
 	t.Ordering, err = getOrderingFromChar(suffix[0])
@@ -38,6 +39,11 @@ func NewTemplate(template string) (*Template, error) {
 	t.Mask = suffix[1:]
 
 	return t, nil
+}
+
+// Returns the original string used to construct this template
+func (t Template) String() string {
+	return t.templateString
 }
 
 // Returns the prefix and suffix parts of a template string, defaulting to a
