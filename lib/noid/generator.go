@@ -56,10 +56,10 @@ func stringReverseRunes(s string) []rune {
 
 func NewSuffixGenerator(template *Template, sequenceValue uint64) *SuffixGenerator {
 	nsg := &SuffixGenerator{sequenceValue: sequenceValue}
-	nsg.ordering = template.ordering
-	nsg.minLength = len(template.mask)
+	nsg.ordering = template.Ordering
+	nsg.minLength = len(template.Mask)
 
-	reverseMask := stringReverseRunes(template.mask)
+	reverseMask := stringReverseRunes(template.Mask)
 	nsg.reverseMaskBits = make([]byte, nsg.minLength)
 	for i, char := range reverseMask {
 		nsg.reverseMaskBits[i] = bitsForMaskCharacter(char)

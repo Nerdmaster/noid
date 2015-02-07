@@ -35,11 +35,11 @@ func (minter *Minter) Mint() string {
 	result := minter.generator.ToString()
 	minter.generator.NextSequence()
 
-	if minter.template.prefix != "" {
-		result = minter.template.prefix + "." + result
+	if minter.template.Prefix != "" {
+		result = minter.template.Prefix + "." + result
 	}
 
-	if minter.template.hasCheckDigit {
+	if minter.template.HasCheckDigit {
 		result = result + string(computeCheckDigit(result))
 	}
 
