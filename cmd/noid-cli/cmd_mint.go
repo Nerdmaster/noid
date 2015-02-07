@@ -51,6 +51,14 @@ func mint(template string, sequenceStart uint64) string {
 	return minter.Mint()
 }
 
+func mintFromArgs(args []string) string {
+	sequenceVal, err := strconv.ParseUint(args[1], 10, 64)
+	if err != nil {
+		mintUsageError(fmt.Sprintf(`Unable to mint: sequence value "%s" is not a number`, args[1]))
+	}
+	return mint(args[0], sequenceVal)
+}
+
 func cmdMint(args []string) {
 	if len(args) < 1 {
 		mintUsageError("Mint command requires a sub-command")
@@ -88,11 +96,7 @@ func cmdMint(args []string) {
 }
 
 func cmdMintImmediate(args []string) {
-	sequenceVal, err := strconv.ParseUint(args[1], 10, 64)
-	if err != nil {
-		mintUsageError(fmt.Sprintf(`"%s" is not a valid number`, args[1]))
-	}
-	fmt.Println(mint(args[0], sequenceVal))
+	fmt.Println(mintFromArgs(args))
 }
 
 func cmdCreateDatabase(args []string) {
