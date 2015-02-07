@@ -24,20 +24,20 @@ func TestTemplatesWithPrefix(t *testing.T) {
 	str := "prefix.reedeek"
 	template, _ := NewTemplate(str)
 
-	assertTemplateAttributeS(str, "prefix", "prefix", template.prefix, t)
-	assertTemplateAttributeS(str, "mask", "eedee", template.mask, t)
-	assertTemplateAttributeO(str, "ordering", Random, template.ordering, t)
-	assertTemplateAttributeB(str, "hasCheckDigit", true, template.hasCheckDigit, t)
+	assertTemplateAttributeS(str, "prefix", "prefix", template.Prefix, t)
+	assertTemplateAttributeS(str, "mask", "eedee", template.Mask, t)
+	assertTemplateAttributeO(str, "ordering", Random, template.Ordering, t)
+	assertTemplateAttributeB(str, "hasCheckDigit", true, template.HasCheckDigit, t)
 }
 
 func TestTemplatesWithoutPrefix(t *testing.T) {
 	str := "reedeek"
 	template, _ := NewTemplate(str)
 
-	assertTemplateAttributeS(str, "prefix", "", template.prefix, t)
-	assertTemplateAttributeS(str, "mask", "eedee", template.mask, t)
-	assertTemplateAttributeO(str, "ordering", Random, template.ordering, t)
-	assertTemplateAttributeB(str, "hasCheckDigit", true, template.hasCheckDigit, t)
+	assertTemplateAttributeS(str, "prefix", "", template.Prefix, t)
+	assertTemplateAttributeS(str, "mask", "eedee", template.Mask, t)
+	assertTemplateAttributeO(str, "ordering", Random, template.Ordering, t)
+	assertTemplateAttributeB(str, "hasCheckDigit", true, template.HasCheckDigit, t)
 }
 
 func TestBadOrder(t *testing.T) {
@@ -57,16 +57,16 @@ func TestMoreMoarMOAR(t *testing.T) {
 	str := "foo.seedee"
 	template, _ := NewTemplate(str)
 
-	assertTemplateAttributeS(str, "prefix", "foo", template.prefix, t)
-	assertTemplateAttributeS(str, "mask", "eedee", template.mask, t)
-	assertTemplateAttributeO(str, "ordering", SequentialLimited, template.ordering, t)
-	assertTemplateAttributeB(str, "hasCheckDigit", false, template.hasCheckDigit, t)
+	assertTemplateAttributeS(str, "prefix", "foo", template.Prefix, t)
+	assertTemplateAttributeS(str, "mask", "eedee", template.Mask, t)
+	assertTemplateAttributeO(str, "ordering", SequentialLimited, template.Ordering, t)
+	assertTemplateAttributeB(str, "hasCheckDigit", false, template.HasCheckDigit, t)
 
 	str = "foo.zeedee"
 	template, _ = NewTemplate(str)
 
-	assertTemplateAttributeS(str, "prefix", "foo", template.prefix, t)
-	assertTemplateAttributeS(str, "mask", "eedee", template.mask, t)
-	assertTemplateAttributeO(str, "ordering", SequentialUnlimited, template.ordering, t)
-	assertTemplateAttributeB(str, "hasCheckDigit", false, template.hasCheckDigit, t)
+	assertTemplateAttributeS(str, "prefix", "foo", template.Prefix, t)
+	assertTemplateAttributeS(str, "mask", "eedee", template.Mask, t)
+	assertTemplateAttributeO(str, "ordering", SequentialUnlimited, template.Ordering, t)
+	assertTemplateAttributeB(str, "hasCheckDigit", false, template.HasCheckDigit, t)
 }

@@ -20,6 +20,9 @@ func NewSequencedMinter(template string, startSequence uint64) (*Minter, error) 
 		return nil, err
 	}
 	g := NewSuffixGenerator(t, startSequence)
+	if g == nil {
+		return nil, errors.New("Minter sequence value too high")
+	}
 	if g.totalBits > 64 {
 		return nil, errors.New("Template range is too big!  Try a shorter template mask string.")
 	}
@@ -28,15 +31,23 @@ func NewSequencedMinter(template string, startSequence uint64) (*Minter, error) 
 	return minter, nil
 }
 
+func (m *Minter) Template() string {
+	return m.template.String()
+}
+
+func (m *Minter) Sequence() uint64 {
+	return m.generator.Sequence()
+}
+
 func (minter *Minter) Mint() string {
 	result := minter.generator.ToString()
 	minter.generator.NextSequence()
 
-	if minter.template.prefix != "" {
-		result = minter.template.prefix + "." + result
+	if minter.template.Prefix != "" {
+		result = minter.template.Prefix + "." + result
 	}
 
-	if minter.template.hasCheckDigit {
+	if minter.template.HasCheckDigit {
 		result = result + string(computeCheckDigit(result))
 	}
 
