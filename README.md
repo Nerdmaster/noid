@@ -56,10 +56,26 @@ unnecessary overhead and confusion:
 Why
 -----
 
-If folks are gonna do this, they should have an option that doesn't force a
-specific language on them.  i.e., they should have something that can just run
-as a standalone binary, and is an **actual** micro-service (writing a Ruby
-*library* and calling it a micro-service doesn't count, guys).
+*Please note*: at the time I started building this, I had *not* seen [the ndlib
+noids library](https://github.com/ndlib/noids).  I'm not sure how I missed it,
+but I did.  Clearly the idea of doing noids as a Go service wasn't as original
+as I thought, and so the existence of my repo looks pretty ****ing lame.
+
+I swear it isn't stolen - when I was building mine all I could find was
+horrible options that required either a bunch of dependencies (Ruby libraries),
+were too complex (the Perl version), or weren't finished.
+
+I may or may not continue to improve on mine, but as I've just noticed the
+ndlib app, I'm not longer thinking I'm filling a void in the library world
+(while also mocking that community).  So if you need something for production,
+chances are you should use theirs!
+
+I imagine our approaches will differ in pretty significant ways, but the ndlib
+github group is made up of people who are, in general, going to understand
+these types of problems far better than I.  So if I do something cooler (likely
+by accident), it's still probably not worth using my code over theirs.
+
+I feel kind of stupid.
 
 Variances
 -----
