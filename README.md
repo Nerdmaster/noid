@@ -11,6 +11,39 @@ This software is licensed under the [Creative Commons Attribution 4.0 Internatio
 license, which seems to be the most public-domain-like license I can find
 that's not on shaky ground legally.
 
+Usage
+-----
+
+### From Go
+
+If you use Go, you can import the noid library directly:
+
+    import "nerdbucket.com/go/noid/noid"
+
+However, this is not necessarily recommended.  The purpose of this project is
+to create a nice service for noiding without having the "service" living inside
+another application.  As such, if you wish to use the library directly, I leave
+that as an exercise for the reader.  You'll have to look over the code on your
+own, as I won't be doing any real API documentation anytime soon.
+
+### From the command line
+
+Since I will need at least two binaries, I created the "cmd" directory to
+contain the binary source packages.
+
+Building these is a matter of just running:
+
+    go get -u nerdbucket.com/go/noid/cmd/...
+
+The binaries (right now, just one: `noid-cli`), will be created in
+`$GOPATH/bin`.
+
+#### Using `noid-cli`
+
+This is partially for testing things out, but for the moment it's the only
+option.  I could spew examples here, but the easiest way to learn this is to
+just run `noid-cli help` and `noid-cli help mint`.
+
 About
 -----
 
