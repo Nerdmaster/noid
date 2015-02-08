@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Nerdmaster/noid/lib/noid"
+	"nerdbucket.com/go/noid/noid"
 	"os"
 	"strconv"
 )
